@@ -1,0 +1,151 @@
+import * as utils from "@iobroker/adapter-core";
+import * as viessmann from "viessmann-api-client";
+
+let client: viessmann.Client;
+
+const adapter = utils.adapter({
+    name: 'viessmannapi',
+
+    ready: async () => {
+        log("starting adapter...");
+        adapter.setState("info.connection", false, true);
+
+        let viessmannConfig: viessmann.ViessmannClientConfig = {
+            auth: {
+                host: 'https://iam.viessmann.com',
+                token: '/idp/v1/token',
+                authorize: '/idp/v1/authorize',
+                onRefresh: (token: string) => adapter.setState('auth.refreshToken', token, true),
+            },
+            api: {
+                host: 'https://api.viessmann-platform.io',
+            },
+            logger: log,
+            pollInterval: 60000
+        };
+
+        let user = adapter.config.email;
+        let pwd = adapter.config.password;
+
+        if (!user || !pwd) {
+            log('provide username and password in adapter settings!', 'error');
+            return;
+        }
+        const credentials = await obtainCredentials(user!, pwd!);
+
+        client = await new viessmann.Client(viessmannConfig).connect(credentials);
+        client.getFeatures().forEach(f => createFeatureObjects(client, f));
+
+        client.observeConnection(connected => adapter.setState("info.connection", connected, true));
+        client.observe((f, p) => {
+            const name = `${f.meta.feature}.${p.name}`;
+            const val = JSON.stringify(p);
+            log(`update for ${name}, value ${val}`, 'debug');
+
+            // TODO conversion of arrays and objects into strings due to ioBroker not beeing able to handle those
+            let value = p.value;
+            if ('array' === p.type || 'object' === p.type) {
+                value = JSON.stringify(value);
+            }
+            adapter.setState(name, value, true);
+        });
+
+        await adapter.setState("info.connection", true, true);
+        adapter.subscribeStates("*");
+    },
+
+    unload: async (callback) => {
+        try {
+            client.clearObservers();
+            adapter.log.info('cleaned everything up...');
+            callback();
+        } catch (e) {
+            callback();
+        }
+    },
+
+    stateChange: (id, state) => {
+        const s = JSON.stringify(state);
+        log(`received update for ID ${id}: ${s}`);
+    }
+});
+
+async function obtainCredentials(user: string, password: string): Promise<viessmann.Credentials> {
+    return createAuthObject()
+        .then(() => getRefreshToken())
+        .catch(err => null)
+        .then(token => token !== undefined && token !== null ? {
+            refreshToken: token
+        } : {
+                user: user,
+                password: password
+            });
+}
+
+async function createAuthObject(): Promise<object> {
+    const objectId = 'auth.refreshToken';
+    return new Promise((resolve, reject) => {
+        adapter.setObjectNotExists(objectId, {
+            type: 'state',
+            common: {
+                name: 'OAuth2 Refresh token',
+                type: 'string',
+                role: 'auth'
+            },
+            native: {}
+        }, (err, obj) => {
+            if (err) reject(err);
+            else resolve(obj);
+        });
+    });
+};
+
+async function getRefreshToken(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        adapter.getState('auth.refreshToken', (err, state) => {
+            if (err) {
+                return reject(err);
+            }
+
+            if (!state || !state.val) {
+                return reject("could not retrieve refresh token");
+            }
+            return resolve(state.val as string);
+        });
+    });
+}
+
+function createFeatureObjects(client: viessmann.Client, feature: viessmann.Feature) {
+    feature.properties.forEach(p => createPropertyObject(client, feature, p));
+}
+
+function createPropertyObject(client: viessmann.Client, feature: viessmann.Feature, property: viessmann.Property) {
+    const name = `${feature.meta.feature}.${property.name}`;
+    // TODO conversion of arrays and objects into strings due to ioBroker not beeing able to handle those
+    let type = property.type;
+    let value = property.value;
+    if ('array' === type || 'object' === type) {
+        type = 'string';
+        value = JSON.stringify(value);
+    }
+
+    adapter.setObjectNotExists(name, {
+        type: 'state',
+        common: {
+            name: name,
+            type: type,
+            role: 'value',
+            read: true,
+            write: false,
+        }, native: {}
+    }, (err, obj) => {
+        if (err) log(`error creating object ${name}`, 'error');
+        else adapter.setState(name, value, true);
+    });
+}
+
+function log(message: string, level: ioBroker.LogLevel = "info") {
+    if (!adapter) return;
+    if (level === "silly" && !(level in adapter.log)) level = "debug";
+    adapter.log[level](message);
+};

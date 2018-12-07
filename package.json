@@ -1,0 +1,52 @@
+{
+  "name": "iobroker.viessmannapi",
+  "version": "1.0.0",
+  "description": "viessmannapi",
+  "author": {
+    "name": "Thomas Vidic",
+    "email": "theuklid@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Thomas Vidic",
+      "email": "theuklid@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/thovid/ioBroker.viessmannapi",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "viessmannapi",
+    "Smart Home",
+    "home automation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thovid/ioBroker.viessmannapi"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^1.0.1",
+    "typescript": "^3.2.2",
+    "viessmann-api-client": "git+https://github.com/thovid/node-viessmann-api-client.git"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.12",
+    "chai": "^4.1.2",
+    "cpx": "^1.5.0",
+    "gulp": "^3.9.1",
+    "mocha": "^4.1.0",
+    "rimraf": "^2.6.2"
+  },
+  "main": "./dist/main.js",
+  "scripts": {
+    "clean-build-dir": "cpx dist/src/**/*.* dist && rimraf dist/src && rimraf dist/{io-,}package.json",
+    "prebuild": "rimraf ./dist",
+    "build:ts": "tsc -p src/tsconfig.json",
+    "postbuild:ts": "npm run clean-build-dir",
+    "build": "npm run build:ts"
+  },
+  "bugs": {
+    "url": "https://github.com/thovid/ioBroker.viessmannapi/issues"
+  },
+  "readmeFilename": "README.md"
+}

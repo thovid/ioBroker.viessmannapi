@@ -1,0 +1,34 @@
+{
+	//"compileOnSave": true,
+	"compilerOptions": {
+		"noEmit": true,
+		"noEmitOnError": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"outDir": "./dist",
+		"baseUrl": "./src",
+		"removeComments": false,
+		"jsx": "react",
+
+		"strict": true,
+
+		// enable the new reflection API
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+
+		"resolveJsonModule": true,
+
+		//"sourceMap": false,
+		"sourceMap": true,
+		"inlineSourceMap": false,
+		//"sourceRoot": "src/",
+		"target": "es6"
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"dist/**",
+		"node_modules/**"
+	]
+}

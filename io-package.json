@@ -1,0 +1,47 @@
+{
+    "common": {
+        "name": "viessmannapi",
+        "version": "1.0.0",
+        "news": {
+            "1.0.0": {
+                "en": "Initial version - requests data from the viessmann server and writes it into states",
+                "de": "Initiale Version - Fragt Daten über den Viessmann Server ab und speichert sie in entsprechenden states"
+            }
+        },
+        "title": "Viessmann API Adapter",
+        "titleLang": {
+            "en": "Viessmann API Adapter",
+            "de": "Viessmann API Adapter"
+        },
+        "desc": {
+            "en": "Adapter to communicate with a Viessmann heating system via the API used by Viessmann Apps",
+            "de": "Adapter um mit einer Viessmann Heizung über die von den Viessmann Apps genutzte API zu kommunizieren"
+        },
+        "authors": [
+            "Thomas Vidic <theuklid@gmail.com>"
+        ],
+        "docs": {
+            "en": "docs/en/admin.md",
+            "de": "docs/de/admin.md"
+        },
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "icon": "viessmannapi.png",
+        "materialize": true,
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/thovid/ioBroker.viessmannapi/master/admin/viessmannapi.png",
+        "keywords": [
+            "viessmann", "api", "heating"
+        ],
+        "readme": "https://github.com/thovid/ioBroker.viessmannapi/blob/master/README.md",
+        "loglevel": "info",
+        "type": "general",
+        "license": "MIT",
+        "messagebox": false
+    },
+    "native": {
+        "email": "",
+        "password": ""
+    },
+    "objects": []
+}
