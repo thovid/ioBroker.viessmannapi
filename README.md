@@ -15,9 +15,11 @@ The specific states may depend on your installation. Examples are
 - `viessmannapi.0.heating.sensors.temperature.outside.value` - outside temperature measured by the external sensor
 
 ## Notes
-This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
+- This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
 
-Currently, it is not implemented to change values or settings. This is planned for a future release.
+- Currently, it is not implemented to change values or settings. This is planned for a future release.
+
+- Currently, git needs to be installed on the host. This will change once https://github.com/thovid/node-viessmann-api-client/issues/3 is resolved.
 
 ## Changelog
 
