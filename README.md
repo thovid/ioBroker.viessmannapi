@@ -22,7 +22,9 @@ The specific states may depend on your installation. Examples are
 - Currently, git needs to be installed on the host. This will change once https://github.com/thovid/node-viessmann-api-client/issues/3 is resolved.
 
 ## Changelog
-
+### 1.1.0 (2018/12/10)
+* (thovid) Deletes email and password after sucessful connection, further connections are done via refresh token
+* (thovid) Uses npm released version of client lib, so no longer requires git upon installation
 ### 1.0.0 (2018/12/07)
 * (thovid) Initial adapter
 

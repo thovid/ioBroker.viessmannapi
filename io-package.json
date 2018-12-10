@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "news": {
+            "1.1.0": {
+                "en": "No longer stores email and password if initial connection was sucessful",
+                "de": "Email und Password werden nicht mehr gespeichert wenn die Verbindung erstmalig erfolgreich hergestellt wurde"
+            },
             "1.0.0": {
                 "en": "Initial version - requests data from the viessmann server and writes it into states",
                 "de": "Initiale Version - Fragt Daten über den Viessmann Server ab und speichert sie in entsprechenden states"

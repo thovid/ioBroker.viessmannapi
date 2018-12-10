@@ -9,31 +9,12 @@ const adapter = utils.adapter({
     ready: async () => {
         log("starting adapter...");
         adapter.setState("info.connection", false, true);
-
-        let viessmannConfig: viessmann.ViessmannClientConfig = {
-            auth: {
-                host: 'https://iam.viessmann.com',
-                token: '/idp/v1/token',
-                authorize: '/idp/v1/authorize',
-                onRefresh: (token: string) => adapter.setState('auth.refreshToken', token, true),
-            },
-            api: {
-                host: 'https://api.viessmann-platform.io',
-            },
-            logger: log,
-            pollInterval: 60000
-        };
-
-        let user = adapter.config.email;
-        let pwd = adapter.config.password;
-
-        if (!user || !pwd) {
-            log('provide username and password in adapter settings!', 'error');
+        const _client = await initializeClient();
+        if(_client === null) {
             return;
         }
-        const credentials = await obtainCredentials(user!, pwd!);
 
-        client = await new viessmann.Client(viessmannConfig).connect(credentials);
+        client = _client;
         client.getFeatures().forEach(f => createFeatureObjects(client, f));
 
         client.observeConnection(connected => adapter.setState("info.connection", connected, true));
@@ -50,7 +31,7 @@ const adapter = utils.adapter({
             adapter.setState(name, value, true);
         });
 
-        await adapter.setState("info.connection", true, true);
+        adapter.setState("info.connection", true, true);
         adapter.subscribeStates("*");
     },
 
@@ -66,20 +47,87 @@ const adapter = utils.adapter({
 
     stateChange: (id, state) => {
         const s = JSON.stringify(state);
-        log(`received update for ID ${id}: ${s}`);
+        log(`received update for ID ${id}: ${s}`, 'debug');
     }
 });
 
-async function obtainCredentials(user: string, password: string): Promise<viessmann.Credentials> {
+async function initializeClient(): Promise<viessmann.Client | null> {
+    let viessmannConfig: viessmann.ViessmannClientConfig = {
+        auth: {
+            host: 'https://iam.viessmann.com',
+            token: '/idp/v1/token',
+            authorize: '/idp/v1/authorize',
+            onRefresh: (token: string) => adapter.setState('auth.refreshToken', token, true),
+        },
+        api: {
+            host: 'https://api.viessmann-platform.io',
+        },
+        logger: log,
+        pollInterval: 60000
+    };
+
+    let user = adapter.config.email;
+    let pwd = adapter.config.password;
+
+    const credentials = await obtainCredentials(user, pwd);
+    if ((credentials as viessmann.TokenCredentials).refreshToken !== undefined) {
+        try {
+            return await new viessmann.Client(viessmannConfig).connect(credentials);
+        } catch (error) {
+            log(`error connecting: ${JSON.stringify(error)}`, 'error');
+            log('could not connect with refresh token, please enter email and password on adapter admin page', 'error');
+            adapter.setState('auth.refreshToken', '', true);
+        }
+    } else {
+        try {
+            const result = await new viessmann.Client(viessmannConfig).connect(credentials);
+            // delete user and password from config & restart adapter
+            log('sucessfully obtained refresh token, adapter should now restart', 'info');
+            updateConfig({
+                email: undefined,
+                password: undefined,
+            });
+            return result;
+        } catch (error) {
+            log(`error connecting: ${JSON.stringify(error)}`, 'error');
+            log('could not connect using email and password, check credentials!', 'error');
+        }
+    }
+    return null;
+}
+
+async function obtainCredentials(user: string | undefined, password: string | undefined): Promise<viessmann.Credentials> {
     return createAuthObject()
         .then(() => getRefreshToken())
         .catch(err => null)
         .then(token => token !== undefined && token !== null ? {
             refreshToken: token
         } : {
-                user: user,
-                password: password
+                user: user!,
+                password: password!
             });
+}
+
+async function updateConfig(newConfig: Partial<ioBroker.AdapterConfig>) {
+    const config: ioBroker.AdapterConfig = {
+        ...adapter.config,
+        ...newConfig,
+    };
+
+    return new Promise<ioBroker.SettableObject>((resolve, reject) => {
+        adapter.getForeignObject(`system.adapter.${adapter.namespace}`, (err, obj) => {
+            if (err) return reject(err);
+            return resolve(obj as ioBroker.SettableObject);
+        });
+    }).then((obj) => {
+        obj.native = config;
+        return obj;
+    }).then(updatedAdapter => new Promise<any>((resolve, reject) => {
+        adapter.setForeignObject(`system.adapter.${adapter.namespace}`, updatedAdapter, (err, obj) => {
+            if (err) return reject(err);
+            return resolve(obj);
+        });
+    }));
 }
 
 async function createAuthObject(): Promise<object> {
@@ -107,7 +155,7 @@ async function getRefreshToken(): Promise<string> {
                 return reject(err);
             }
 
-            if (!state || !state.val) {
+            if (!state || !state.val || '' === state.val) {
                 return reject("could not retrieve refresh token");
             }
             return resolve(state.val as string);
