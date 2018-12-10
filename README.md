@@ -20,6 +20,8 @@ The specific states may depend on your installation. Examples are
 - Currently, it is not implemented to change values or settings. This is planned for a future release.
 
 ## Changelog
+### 1.1.1 (2018/12/10)
+* (thovid) fixed a bug that prevented certain properties from beeing exposed as states (for example `heating.burner`)
 ### 1.1.0 (2018/12/10)
 * (thovid) Deletes email and password after sucessful connection, further connections are done via refresh token
 * (thovid) Uses npm released version of client lib, so no longer requires git upon installation

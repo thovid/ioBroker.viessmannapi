@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "news": {
+            "1.1.1": {
+                "en": "Fixed a bug preventing certain properties from beeing exposed as state",
+                "de": "Bugfix: manche Properties wurden nicht als state exportiert"
+            },
             "1.1.0": {
                 "en": "No longer stores email and password if initial connection was sucessful",
                 "de": "Email und Password werden nicht mehr gespeichert wenn die Verbindung erstmalig erfolgreich hergestellt wurde"
