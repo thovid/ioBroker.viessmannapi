@@ -11,6 +11,7 @@
 		"jsx": "react",
 
 		"strict": true,
+		"noImplicitThis": false,
 
 		// enable the new reflection API
 		"experimentalDecorators": true,
@@ -18,10 +19,8 @@
 
 		"resolveJsonModule": true,
 
-		//"sourceMap": false,
 		"sourceMap": true,
 		"inlineSourceMap": false,
-		//"sourceRoot": "src/",
 		"target": "es6"
 	},
 	"include": [

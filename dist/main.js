@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils = require("@iobroker/adapter-core");
 const viessmann = require("viessmann-api-client");
+const utils_1 = require("./utils");
 let client;
 const adapter = utils.adapter({
     name: 'viessmannapi',
@@ -115,58 +116,35 @@ function obtainCredentials(user, password) {
 function updateConfig(newConfig) {
     return __awaiter(this, void 0, void 0, function* () {
         const config = Object.assign({}, adapter.config, newConfig);
-        return new Promise((resolve, reject) => {
-            adapter.getForeignObject(`system.adapter.${adapter.namespace}`, (err, obj) => {
-                if (err)
-                    return reject(err);
-                return resolve(obj);
-            });
-        }).then((obj) => {
+        return utils_1.p(adapter.getForeignObject, adapter)(`system.adapter.${adapter.namespace}`)
+            .then((obj) => {
             obj.native = config;
             return obj;
-        }).then(updatedAdapter => new Promise((resolve, reject) => {
-            adapter.setForeignObject(`system.adapter.${adapter.namespace}`, updatedAdapter, (err, obj) => {
-                if (err)
-                    return reject(err);
-                return resolve(obj);
-            });
-        }));
+        }).then(updatedAdapter => utils_1.p(adapter.setForeignObject, adapter)(`system.adapter.${adapter.namespace}`, updatedAdapter));
     });
 }
 function createAuthObject() {
     return __awaiter(this, void 0, void 0, function* () {
         const objectId = 'auth.refreshToken';
-        return new Promise((resolve, reject) => {
-            adapter.setObjectNotExists(objectId, {
-                type: 'state',
-                common: {
-                    name: 'OAuth2 Refresh token',
-                    type: 'string',
-                    role: 'auth'
-                },
-                native: {}
-            }, (err, obj) => {
-                if (err)
-                    reject(err);
-                else
-                    resolve(obj);
-            });
+        return utils_1.p(adapter.setObjectNotExists, adapter)(objectId, {
+            type: 'state',
+            common: {
+                name: 'OAuth2 Refresh token',
+                type: 'string',
+                role: 'auth'
+            },
+            native: {}
         });
     });
 }
 ;
 function getRefreshToken() {
     return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            adapter.getState('auth.refreshToken', (err, state) => {
-                if (err) {
-                    return reject(err);
-                }
-                if (!state || !state.val || '' === state.val) {
-                    return reject("could not retrieve refresh token");
-                }
-                return resolve(state.val);
-            });
+        return utils_1.p(adapter.getState, adapter)('auth.refreshToken').then(state => {
+            if (!state || !state.val || '' === state.val) {
+                throw new Error('could not retrieve refersh token');
+            }
+            return state.val;
         });
     });
 }

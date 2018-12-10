@@ -1,5 +1,6 @@
 import * as utils from "@iobroker/adapter-core";
 import * as viessmann from "viessmann-api-client";
+import {p} from "./utils";
 
 let client: viessmann.Client;
 
@@ -10,7 +11,7 @@ const adapter = utils.adapter({
         log("starting adapter...");
         adapter.setState("info.connection", false, true);
         const _client = await initializeClient();
-        if(_client === null) {
+        if (_client === null) {
             return;
         }
 
@@ -114,52 +115,34 @@ async function updateConfig(newConfig: Partial<ioBroker.AdapterConfig>) {
         ...newConfig,
     };
 
-    return new Promise<ioBroker.SettableObject>((resolve, reject) => {
-        adapter.getForeignObject(`system.adapter.${adapter.namespace}`, (err, obj) => {
-            if (err) return reject(err);
-            return resolve(obj as ioBroker.SettableObject);
-        });
-    }).then((obj) => {
-        obj.native = config;
-        return obj;
-    }).then(updatedAdapter => new Promise<any>((resolve, reject) => {
-        adapter.setForeignObject(`system.adapter.${adapter.namespace}`, updatedAdapter, (err, obj) => {
-            if (err) return reject(err);
-            return resolve(obj);
-        });
-    }));
+    return p<ioBroker.SettableObject>(adapter.getForeignObject, adapter)
+        (`system.adapter.${adapter.namespace}`)
+        .then((obj) => {
+            obj.native = config;
+            return obj
+        }).then(updatedAdapter => p<{id: string}>(adapter.setForeignObject, adapter)
+            (`system.adapter.${adapter.namespace}`, updatedAdapter))
 }
 
 async function createAuthObject(): Promise<object> {
     const objectId = 'auth.refreshToken';
-    return new Promise((resolve, reject) => {
-        adapter.setObjectNotExists(objectId, {
-            type: 'state',
-            common: {
-                name: 'OAuth2 Refresh token',
-                type: 'string',
-                role: 'auth'
-            },
-            native: {}
-        }, (err, obj) => {
-            if (err) reject(err);
-            else resolve(obj);
-        });
+    return p<object>(adapter.setObjectNotExists, adapter)(objectId, {
+        type: 'state',
+        common: {
+            name: 'OAuth2 Refresh token',
+            type: 'string',
+            role: 'auth'
+        },
+        native: {}
     });
 };
 
 async function getRefreshToken(): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        adapter.getState('auth.refreshToken', (err, state) => {
-            if (err) {
-                return reject(err);
-            }
-
-            if (!state || !state.val || '' === state.val) {
-                return reject("could not retrieve refresh token");
-            }
-            return resolve(state.val as string);
-        });
+    return p<ioBroker.State>(adapter.getState, adapter)('auth.refreshToken').then(state => {
+        if(!state || !state.val || '' === state.val) {
+            throw new Error('could not retrieve refersh token');
+        } 
+        return state.val as string;
     });
 }
 
