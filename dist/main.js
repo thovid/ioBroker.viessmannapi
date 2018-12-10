@@ -73,6 +73,14 @@ function initializeClient() {
         const credentials = yield obtainCredentials(user, pwd);
         if (credentials.refreshToken !== undefined) {
             try {
+                if (user || pwd) {
+                    log('found email and password in configuration, deleting it due to security reasons. Adapter should restart now', 'info');
+                    updateConfig({
+                        email: undefined,
+                        password: undefined,
+                    });
+                }
+                log('authenticating with refresh token', 'info');
                 return yield new viessmann.Client(viessmannConfig).connect(credentials);
             }
             catch (error) {

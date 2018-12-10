@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "1.1.1",
+        "version": "1.1.2",
         "news": {
+            "1.1.2": {
+                "en": "Fixed bug: email & password were not removed from config in existing installations",
+                "de": "Bugfix: email & password wurden in bestehenden Installationen nicht aus config entfernt"
+            },
             "1.1.1": {
                 "en": "Fixed a bug preventing certain properties from beeing exposed as state",
                 "de": "Bugfix: manche Properties wurden nicht als state exportiert"

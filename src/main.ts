@@ -73,6 +73,14 @@ async function initializeClient(): Promise<viessmann.Client | null> {
     const credentials = await obtainCredentials(user, pwd);
     if ((credentials as viessmann.TokenCredentials).refreshToken !== undefined) {
         try {
+            if (user || pwd) {
+                log('found email and password in configuration, deleting it due to security reasons. Adapter should restart now', 'info');
+                updateConfig({
+                    email: undefined,
+                    password: undefined,
+                });
+            }
+            log('authenticating with refresh token', 'info');
             return await new viessmann.Client(viessmannConfig).connect(credentials);
         } catch (error) {
             log(`error connecting: ${JSON.stringify(error)}`, 'error');
@@ -139,9 +147,9 @@ async function createAuthObject(): Promise<object> {
 
 async function getRefreshToken(): Promise<string> {
     return p<ioBroker.State>(adapter.getState, adapter)('auth.refreshToken').then(state => {
-        if(!state || !state.val || '' === state.val) {
+        if (!state || !state.val || '' === state.val) {
             throw new Error('could not retrieve refersh token');
-        } 
+        }
         return state.val as string;
     });
 }

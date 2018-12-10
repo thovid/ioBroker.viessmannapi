@@ -20,6 +20,8 @@ The specific states may depend on your installation. Examples are
 - Currently, it is not implemented to change values or settings. This is planned for a future release.
 
 ## Changelog
+### 1.1.2 (2018/12/10)
+* (thovid) fixed bug that prevented email and password to be removed after initial authentication 
 ### 1.1.1 (2018/12/10)
 * (thovid) fixed a bug that prevented certain properties from beeing exposed as states (for example `heating.burner`)
 ### 1.1.0 (2018/12/10)
