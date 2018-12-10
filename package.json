@@ -1,6 +1,6 @@
 {
   "name": "iobroker.viessmannapi",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "viessmannapi",
   "author": {
     "name": "Thomas Vidic",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^1.0.1",
     "typescript": "^3.2.2",
-    "viessmann-api-client": "^1.0.1"
+    "viessmann-api-client": "^1.0.2"
   },
   "devDependencies": {
     "@types/node": "^10.12.12",
