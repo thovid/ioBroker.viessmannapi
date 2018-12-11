@@ -2,7 +2,9 @@
 # ioBroker.viessmannapi
 =================
 
-This adapter connects your ioBroker system to your Viessmann central heating via the Viessmann API. All enabled information provided by the API is polled periodically (every 60 sec) and written into states.
+This adapter connects your ioBroker system to your Viessmann central heating via the Viessmann API. It requires your heating system to be connected to the Viessmann Server via a Vitroconnect or similar device. All enabled information provided by the API is polled periodically (every 60 sec) and written into states.
+
+Note that this is a private project, so use at your own risk. It is not supported or endorsed by Viessmann!
 
 ## Installation
 install the Adpater from this github repository. On adapter settings, enter user name and password of your Viessmann account. If everything goes well, you should see states appear under `viessmannapi.X`. First values should arrive after 60 seconds.
@@ -29,6 +31,13 @@ The specific states may depend on your installation. Examples are
 * (thovid) Uses npm released version of client lib, so no longer requires git upon installation
 ### 1.0.0 (2018/12/07)
 * (thovid) Initial adapter
+
+## Legal
+- Viessmann and Vitroconnect are registered Trademarks of the Viessmann Werke GmbH & Co. KG. 
+
+- This project is a private project and is *not* offically supported or endorsed by the Viessmann Werke GmbH & Co. KG, use at your own risk.
+
+- In case you have any questions, please contact me via github!
 
 ## License
 The MIT License (MIT)
