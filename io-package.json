@@ -39,17 +39,19 @@
         "platform": "Javascript/Node.js",
         "mode": "daemon",
         "icon": "viessmannapi.png",
-        "materialize": true,
-        "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/thovid/ioBroker.viessmannapi/master/admin/viessmannapi.png",
         "keywords": [
-            "viessmann", "api", "heating"
+            "viessmann",
+            "api",
+            "heating"
         ],
         "readme": "https://github.com/thovid/ioBroker.viessmannapi/blob/master/README.md",
         "loglevel": "info",
         "type": "general",
         "license": "MIT",
-        "messagebox": false
+        "messagebox": true,
+        "materialize": true,
+        "enabled": false
     },
     "native": {
         "email": "",
