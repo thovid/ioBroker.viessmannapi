@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "1.1.2",
+        "version": "1.2.0",
         "news": {
+            "1.2.0": {
+                "en": "Experimental support to execute actions via sendTo",
+                "de": "Experimenteller support um actions via sendTo auszuführen"
+            },
             "1.1.2": {
                 "en": "Fixed bug: email & password were not removed from config in existing installations",
                 "de": "Bugfix: email & password wurden in bestehenden Installationen nicht aus config entfernt"

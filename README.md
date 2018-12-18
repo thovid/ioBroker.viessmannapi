@@ -16,12 +16,25 @@ The specific states may depend on your installation. Examples are
 - `viessmannapi.0.heating.circuits.0.operating.modes.active.value` - current operating mode; for example `dhw` means hot water only, `dhwAndHeating` means hot water and heating
 - `viessmannapi.0.heating.sensors.temperature.outside.value` - outside temperature measured by the external sensor
 
+## actions
+Some features provide *actions* to change some property. An action can be invoked via the `sendTo` method. The syntax looks like this:
+```javascript
+sendTo('viessmannapi.0', 'action', {
+    feature: 'heating.circuits.0.operating.programs.comfort',
+    action: 'setTemperature',
+    payload: {targetTemperature: 20}
+});
+```
+Above call would set the target temperature for the comfort program to 20°C. *Note:* Documenting the list of available actions is not yet done. 
+
 ## Notes
 - This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
 
 - Currently, it is not implemented to change values or settings. This is planned for a future release.
 
 ## Changelog
+### 1.2.0 (2018/12/18)
+* (thovid) added experimental support to execute actions on a feature via the `sendTo` function
 ### 1.1.2 (2018/12/10)
 * (thovid) fixed bug that prevented email and password to be removed after initial authentication 
 ### 1.1.1 (2018/12/10)
