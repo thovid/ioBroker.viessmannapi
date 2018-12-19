@@ -50,7 +50,7 @@ const adapter = utils.adapter({
     }),
     stateChange: (id, state) => {
         const s = JSON.stringify(state);
-        log(`received update for ID ${id}: ${s}`, 'debug');
+        log(`received update for ID ${id}: ${s}`, 'silly');
     },
     message: (obj) => __awaiter(this, void 0, void 0, function* () {
         if (!obj) {
@@ -99,6 +99,11 @@ const adapter = utils.adapter({
                         return true;
                     }
                 });
+            }
+            case 'describe': {
+                const allFeatures = client.getFeatures();
+                respond({ result: allFeatures });
+                return true;
             }
             default: {
                 log(`Unknown message command [${obj.command}] received`, 'warn');
