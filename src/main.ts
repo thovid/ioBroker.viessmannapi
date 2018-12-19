@@ -48,7 +48,71 @@ const adapter = utils.adapter({
 
     stateChange: (id, state) => {
         const s = JSON.stringify(state);
-        log(`received update for ID ${id}: ${s}`, 'debug');
+        log(`received update for ID ${id}: ${s}`, 'silly');
+    },
+
+    message: async (obj) => {
+        if (!obj) {
+            return false;
+        }
+
+        function respond(response: string | {}) {
+            if (obj.callback) adapter.sendTo(obj.from, obj.command, response, obj.callback);
+        }
+        // some predefined responses so we only have to define them once
+        const responses = {
+            OK: {error: null, result: "ok"},
+            ERROR_UNKNOWN_COMMAND: {error: "Unknown command!"},
+            MISSING_PARAMETER: (paramName: string) => {
+                return {error: 'missing parameter "' + paramName + '"!'};
+            },
+            ERROR: (error: string) => ({error}),
+        };
+
+        log(`Received command [${obj.command}]`, 'debug');
+        switch (obj.command) {
+            case 'action': {
+                const params = obj.message as any;
+                const feature = params.feature;
+                const action = params.action;
+                const payload = params.payload;
+
+                if (!feature) {
+                    respond(responses.MISSING_PARAMETER('feature'));
+                    return false;
+                }
+                if (!action) {
+                    respond(responses.MISSING_PARAMETER('action'));
+                    return false;
+                }
+                if (!payload) {
+                    respond(responses.MISSING_PARAMETER('payload'));
+                    return false;
+                }
+
+                const result = await client.executeAction(feature, action, payload);
+                return result.caseOf({
+                    left: error => {
+                        respond(responses.ERROR(error));
+                        return false;
+                    },
+                    right: ok => {
+                        respond(responses.OK);
+                        return true;
+                    }
+                });
+            }
+            case 'describe': {
+                const allFeatures = client.getFeatures();
+                respond({result: allFeatures});
+                return true;
+            }
+            default: {
+                log(`Unknown message command [${obj.command}] received`, 'warn');
+                respond(responses.ERROR_UNKNOWN_COMMAND);
+                return false;
+            }
+        }
     }
 });
 
