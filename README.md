@@ -72,8 +72,6 @@ To get a list of all available features with all available actions, simply send 
 ## Notes
 - This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
 
-- Currently, it is not implemented to change values or settings. This is planned for a future release.
-
 ## Changelog
 ### 1.2.0 (2018/12/18)
 * (thovid) added experimental support to execute actions on a feature via the `sendTo` function
