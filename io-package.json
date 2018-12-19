@@ -36,10 +36,6 @@
         "authors": [
             "Thomas Vidic <theuklid@gmail.com>"
         ],
-        "docs": {
-            "en": "docs/en/admin.md",
-            "de": "docs/de/admin.md"
-        },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
         "icon": "viessmannapi.png",
@@ -55,11 +51,39 @@
         "license": "MIT",
         "messagebox": true,
         "materialize": true,
-        "enabled": false
+        "enabled": false,
+        "dependencies": [
+            {
+                "admin": ">=3.0.0"
+            }
+        ]
     },
     "native": {
         "email": "",
         "password": ""
     },
-    "objects": []
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Adapter-Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Whether the adapter is connected to the gateway",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
 }
