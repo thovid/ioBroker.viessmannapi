@@ -69,6 +69,15 @@ Below is a list of supported actions (note, that depending on your heating insta
 ### Querying all features
 To get a list of all available features with all available actions, simply send the message `describe` to a running adapter instance. The result is an array of all available features, that for example can be printed as JSON string via `JSON.stringify()`.
 
+*Example:*
+```javascript
+sendTo('viessmannapi.0', 'describe', {}, (result) => {
+    const features = JSON.stringify(result.result);
+    log(features);
+});
+```
+This script queries all available features and prints them into the log.
+
 ## Notes
 - This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
 
