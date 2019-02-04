@@ -27,44 +27,83 @@ sendTo('viessmannapi.0', 'action', {
 ```
 Above call would set the target temperature for the comfort program to 20°C. 
 
+### Supported Actions
 Below is a list of supported actions (note, that depending on your heating installation, some actions may not be available, or other actions are available but not documented here).
 
-| Feature                                       | Action               | Field                                                                                       | Notes                                                                            |
-|-----------------------------------------------|----------------------|---------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| **heating.circuits.X.heating.curve**          |                      |                                                                                             |                                                                                  |
-|                                               | setCurve             |                                                                                             | sets parameters of the heating curve for circuit 'X'; all fields required        |
-|                                               |                      | `slope` (number, min: 0.2, max: 3.5, stepping: 0.1)                                         |                                                                                  |
-|                                               |                      | `shift` (number, min: -13, max": 40, stepping: 1)                                           |                                                                                  |
-| **heating.circuits.X.operating.modes.active**   |                      |                                                                                             |                                                                                  |
-|                                               | setMode              |                                                                                             | sets the active mode for circuit 'X'                                             |
-|                                               |                      | `mode` (string, enum: ["standby", "dhw", "dhwAndHeating", "forcedReduced", "forcedNormal"]) | required                                                                         |
+| Feature                                           | Action               | Field                                                                                       | Notes                                                                            |
+|---------------------------------------------------|----------------------|---------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| **heating.circuits.X.circulation.schedule**       |                      |                                                                                             |                                                                                  |
+|                                                   | setSchedule          |                                                                                             | sets the schedule for the circulation of circuit 'X'                             |
+|                                                   |                      | `newSchedule` (type:Schedule, see below, modes: 'on', default: 'off')                       | see description of Schedule type below                                           |
+| **heating.circuits.X.heating.curve**              |                      |                                                                                             |                                                                                  |
+|                                                   | setCurve             |                                                                                             | sets parameters of the heating curve for circuit 'X'; all fields required        |
+|                                                   |                      | `slope` (number, min: 0.2, max: 3.5, stepping: 0.1)                                         |                                                                                  |
+|                                                   |                      | `shift` (number, min: -13, max": 40, stepping: 1)                                           |                                                                                  |
+| **heating.circuits.X.heating.schedule**           |                      |                                                                                             |                                                                                  |
+|                                                   | setSchedule          |                                                                                             | sets the heating schedule for circuit 'X'                                        |
+|                                                   |                      | `newSchedule` (type: Schedule, see below, modes: 'normal', default: 'reduced'               | see description of Schedule type below                                           |
+| **heating.circuits.X.operating.modes.active**     |                      |                                                                                             |                                                                                  |
+|                                                   | setMode              |                                                                                             | sets the active mode for circuit 'X'                                             |
+|                                                   |                      | `mode` (string, enum: ["standby", "dhw", "dhwAndHeating", "forcedReduced", "forcedNormal"]) | required                                                                         |
 | **heating.circuits.X.operating.programs.comfort** |                      |                                                                                             |                                                                                  |
-|                                               | setTemperature       |                                                                                             | sets temperature for comfort mode of circuit 'X'                                 |
-|                                               |                      | `targetTemperature` (number, min: 4, max: 37, stepping: 1)                                  | required                                                                         |
-|                                               | activate             |                                                                                             | No fields (send empty object), activates comfort mode                            |
-|                                               | deactivate           |                                                                                             | No fields (send empty object), deactivates comfort mode                          |
+|                                                   | setTemperature       |                                                                                             | sets temperature for comfort mode of circuit 'X'                                 |
+|                                                   |                      | `targetTemperature` (number, min: 4, max: 37, stepping: 1)                                  | required                                                                         |
+|                                                   | activate             |                                                                                             | No fields (send empty object), activates comfort mode                            |
+|                                                   | deactivate           |                                                                                             | No fields (send empty object), deactivates comfort mode                          |
 | **heating.circuits.X.operating.programs.eco**     |                      |                                                                                             |                                                                                  |
-|                                               | activate             |                                                                                             | activates eco mode for circuit 'X' with optional temperature                     |
-|                                               |                      | `temperature` (number, min: 3, max: 37, stepping: 1)                                        | optional                                                                         |
-|                                               | deactivate           |                                                                                             | No fields (send empty object), deactivates eco mode                              |
+|                                                   | activate             |                                                                                             | activates eco mode for circuit 'X' with optional temperature                     |
+|                                                   |                      | `temperature` (number, min: 3, max: 37, stepping: 1)                                        | optional                                                                         |
+|                                                   | deactivate           |                                                                                             | No fields (send empty object), deactivates eco mode                              |
 | **heating.circuits.X.operating.programs.holiday** |                      |                                                                                             |                                                                                  |
-|                                               | schedule             |                                                                                             | Schedules holiday program for circuit 'X'                                        |
-|                                               |                      | `start` (string)                                                                            | required, unknown format (probably some form of date string?)                    |
-|                                               |                      | `end` (string)                                                                              | required, unknown format (probably some form of date string?)                    |
-|                                               | unschedule           |                                                                                             | No fields (send empty object), deactivates holiday program                       |
+|                                                   | schedule             |                                                                                             | Schedules holiday program for circuit 'X'                                        |
+|                                                   |                      | `start` (string)                                                                            | required, unknown format (probably some form of date string?)                    |
+|                                                   |                      | `end` (string)                                                                              | required, unknown format (probably some form of date string?)                    |
+|                                                   | unschedule           |                                                                                             | No fields (send empty object), deactivates holiday program                       |
 | **heating.circuits.X.operating.programs.normal**  |                      |                                                                                             |                                                                                  |
-|                                               | setTemperature       |                                                                                             | Sets target temperature for normal mode of circuit 'X'                           |
-|                                               |                      | `targetTemperature` (number, min: 3, max: 37, stepping: 1)                                  | required                                                                         |
+|                                                   | setTemperature       |                                                                                             | Sets target temperature for normal mode of circuit 'X'                           |
+|                                                   |                      | `targetTemperature` (number, min: 3, max: 37, stepping: 1)                                  | required                                                                         |
 | **heating.circuits.X.operating.programs.reduced** |                      |                                                                                             |                                                                                  |
-|                                               | setTemperature       |                                                                                             | Sets target temperature for reduced mode of circuit 'X'                          |
-|                                               |                      | `targetTemperature` (number, min: 3, max: 37, stepping: 1)                                  | required                                                                         |
+|                                                   | setTemperature       |                                                                                             | Sets target temperature for reduced mode of circuit 'X'                          |
+|                                                   |                      | `targetTemperature` (number, min: 3, max: 37, stepping: 1)                                  | required                                                                         |
 | **heating.dhw.oneTimeCharge**                     |                      |                                                                                             |                                                                                  |
-|                                               | activate             |                                                                                             | No fields (send empty object). Activates one time charge of hot water storage.   |
-|                                               | deactivate           |                                                                                             | No fields (send empty object). Deactivates one time charge of hot water storage. |
+|                                                   | activate             |                                                                                             | No fields (send empty object). Activates one time charge of hot water storage.   |
+|                                                   | deactivate           |                                                                                             | No fields (send empty object). Deactivates one time charge of hot water storage. |
 | **heating.dhw.temperature**                       |                      |                                                                                             |                                                                                  |
-|                                               | setTargetTemperature |                                                                                             | Sets target temperature of hot water storage.                                    |
-|                                               |                      | `temperature` (number, min: 10, max: 60, stepping: 1)                                       | required                                                                         |
+|                                                   | setTargetTemperature |                                                                                             | Sets target temperature of hot water storage.                                    |
+|                                                   |                      | `temperature` (number, min: 10, max: 60, stepping: 1)                                       | required                                                                         |
+| **heating.dhw.schedule**                          |                      |                                                                                             |                                                                                  |
+|                                                   | setSchedule          |                                                                                             | sets the schedule for hot water perparation                                      |
+|                                                   |                      | `newSchedule` (type: Schedule, see below, modes: 'on', default: 'off')                      | See description of Schedule type below                                           |
 
+### Schedule Type
+Most actions use simple data types (numbers, strings). Some actions allow setting schedules. A schedule looks like this:
+```javascript
+{
+   "mon":[
+      {
+         "start":"05:30",
+         "end":"10:00",
+         "mode":"on",
+         "position":0
+      },
+      {
+          "start":"11:00",
+          "end":"12:30",
+          "mode":"on",
+          "position":1
+      },
+      /* ... */
+   ],
+   "tue":[ /* ... */ ],
+   "wed":[ /* ... */ ],
+   "thu":[ /* ... */ ],
+   "fri":[ /* ... */ ],
+   "sat":[ /* ... */ ],
+   "sun":[ /* ... */ ]
+}
+```
+
+For each day, an array must be provided containing the "schedules" for this day. A single entry consists of start and end time, the scheduled "mode" and the position. The supported modes depend on what is scheduled, see table of supported features above. Outside of the scheduled elements, the default mode is used, see the table above. In the example above, something is scheduled to be "on" on monday between 5:30 and 10:00 and betwenn 11:00 and 12:30. Outside of these time intervals, the default mode ("off") is scheduled.
 
 ### Querying all features
 To get a list of all available features with all available actions, simply send the message `describe` to a running adapter instance. The result is an array of all available features, that for example can be printed as JSON string via `JSON.stringify()`.
@@ -82,6 +121,8 @@ This script queries all available features and prints them into the log.
 - This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
 
 ## Changelog
+### 1.3.0 (2019/02/xx)
+* (thovid) impoved action execution: validation of payload improved, schedule payload now supported
 ### 1.2.0 (2018/12/18)
 * (thovid) added experimental support to execute actions on a feature via the `sendTo` function
 ### 1.1.2 (2018/12/10)

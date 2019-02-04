@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "viessmannapi",
-        "version": "1.2.0",
+        "version": "1.3.0",
         "news": {
+            "1.3.0": {
+                "en": "Improvements for actions via sendTo, added support for compact mode, small improvements",
+                "de": "Verbesserung bei der Ausführung von actions via sendTo, Unterstützung für compact mode, kleine Verbesserungen"
+            },
             "1.2.0": {
                 "en": "Experimental support to execute actions via sendTo",
                 "de": "Experimenteller support um actions via sendTo auszuführen"
