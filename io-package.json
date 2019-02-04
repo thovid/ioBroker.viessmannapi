@@ -28,14 +28,14 @@
                 "de": "Initiale Version - Fragt Daten über den Viessmann Server ab und speichert sie in entsprechenden states"
             }
         },
-        "title": "Viessmann API Adapter",
+        "title": "Vitoconnect Viessmann API",
         "titleLang": {
-            "en": "Viessmann API Adapter",
-            "de": "Viessmann API Adapter"
+            "en": "Vitoconnect Viessmann API",
+            "de": "Vitoconnect Viessmann API"
         },
         "desc": {
-            "en": "Adapter to communicate with a Viessmann heating system via the API used by Viessmann Apps",
-            "de": "Adapter um mit einer Viessmann Heizung über die von den Viessmann Apps genutzte API zu kommunizieren"
+            "en": "Adapter to communicate with a Viessmann heating system using the Viessmann Vitoconnect Box via the API used by Viessmann Apps",
+            "de": "Adapter um mit einer Viessmann Heizung, die mit einer Vitoconnect Box ausgestattet ist, über die von den Viessmann Apps genutzte API zu kommunizieren"
         },
         "authors": [
             "Thomas Vidic <theuklid@gmail.com>"
