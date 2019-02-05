@@ -5,10 +5,11 @@ import {p} from "./utils";
 let client: viessmann.Client;
 let adapter: ioBroker.Adapter;
 
+console.log("hello");
 function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
     return adapter = utils.adapter({
         // Default options
-        //...options,
+        ...options,
         // custom options
         name: 'viessmannapi',
 
@@ -265,13 +266,8 @@ function log(message: string, level: ioBroker.LogLevel = 'info') {
     adapter.log[level](message);
 };
 
-log('starting adapter????');
 if (module && module.parent) {
-    // Export startAdapter in compact mode
     module.exports = startAdapter;
-    log('looks like compact mode');
 } else {
-    // Otherwise start the adapter immediately
-    log('looks like normal mode');
     startAdapter();
 }

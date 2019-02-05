@@ -13,13 +13,11 @@ const viessmann = require("viessmann-api-client");
 const utils_1 = require("./utils");
 let client;
 let adapter;
+console.log("hello");
 function startAdapter(options = {}) {
-    return adapter = utils.adapter({
-        // Default options
-        //...options,
+    return adapter = utils.adapter(Object.assign({}, options, { 
         // custom options
-        name: 'viessmannapi',
-        ready: () => __awaiter(this, void 0, void 0, function* () {
+        name: 'viessmannapi', ready: () => __awaiter(this, void 0, void 0, function* () {
             log("starting adapter...");
             adapter.setState("info.connection", false, true);
             const _client = yield initializeClient();
@@ -42,8 +40,7 @@ function startAdapter(options = {}) {
             });
             adapter.setState("info.connection", true, true);
             adapter.subscribeStates("*");
-        }),
-        unload: (callback) => __awaiter(this, void 0, void 0, function* () {
+        }), unload: (callback) => __awaiter(this, void 0, void 0, function* () {
             try {
                 client.clearObservers();
                 adapter.log.info('cleaned everything up...');
@@ -52,12 +49,10 @@ function startAdapter(options = {}) {
             catch (e) {
                 callback();
             }
-        }),
-        stateChange: (id, state) => {
+        }), stateChange: (id, state) => {
             const s = JSON.stringify(state);
             log(`received update for ID ${id}: ${s}`, 'silly');
-        },
-        message: (obj) => __awaiter(this, void 0, void 0, function* () {
+        }, message: (obj) => __awaiter(this, void 0, void 0, function* () {
             if (!obj) {
                 return false;
             }
@@ -116,8 +111,7 @@ function startAdapter(options = {}) {
                     return false;
                 }
             }
-        })
-    });
+        }) }));
 }
 function initializeClient() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -263,15 +257,10 @@ function log(message, level = 'info') {
     adapter.log[level](message);
 }
 ;
-log('starting adapter????');
 if (module && module.parent) {
-    // Export startAdapter in compact mode
     module.exports = startAdapter;
-    log('looks like compact mode');
 }
 else {
-    // Otherwise start the adapter immediately
-    log('looks like normal mode');
     startAdapter();
 }
 //# sourceMappingURL=main.js.map
