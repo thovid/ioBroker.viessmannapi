@@ -1,8 +1,10 @@
+[![Build Status](https://travis-ci.org/thovid/ioBroker.viessmannapi.svg?branch=master)](https://travis-ci.org/thovid/ioBroker.viessmannapi)
+
 ![Logo](admin/viessmannapi.png)
 # ioBroker.viessmannapi
 =================
 
-This adapter connects your ioBroker system to your Viessmann central heating via the Viessmann API. It requires your heating system to be connected to the Viessmann Server via a Vitroconnect or similar device. All enabled information provided by the API is polled periodically (every 60 sec) and written into states.
+This adapter connects your ioBroker system to your Viessmann central heating via the Viessmann API. It requires your heating system to be connected to the Viessmann Server via a Vitoconnect or similar device. All enabled information provided by the API is polled periodically (every 60 sec) and written into states.
 
 Note that this is a private project, so use at your own risk. It is not supported or endorsed by Viessmann!
 
@@ -140,7 +142,7 @@ This script queries all available features and prints them into the log.
 * (thovid) Initial adapter
 
 ## Legal
-- Viessmann and Vitroconnect are registered Trademarks of the Viessmann Werke GmbH & Co. KG. 
+- Viessmann and Vitoconnect are registered Trademarks of the Viessmann Werke GmbH & Co. KG. 
 
 - This project is a private project and is *not* offically supported or endorsed by the Viessmann Werke GmbH & Co. KG, use at your own risk.
 
