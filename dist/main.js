@@ -12,109 +12,113 @@ const utils = require("@iobroker/adapter-core");
 const viessmann = require("viessmann-api-client");
 const utils_1 = require("./utils");
 let client;
-const adapter = utils.adapter({
-    name: 'viessmannapi',
-    ready: () => __awaiter(this, void 0, void 0, function* () {
-        log("starting adapter...");
-        adapter.setState("info.connection", false, true);
-        const _client = yield initializeClient();
-        if (_client === null) {
-            return;
-        }
-        client = _client;
-        client.getFeatures().forEach(f => createFeatureObjects(client, f));
-        client.observeConnection(connected => adapter.setState("info.connection", connected, true));
-        client.observe((f, p) => {
-            const name = `${f.meta.feature}.${p.name}`;
-            const val = JSON.stringify(p);
-            log(`update for ${name}, value ${val}`, 'debug');
-            // TODO conversion of arrays and objects into strings due to ioBroker not beeing able to handle those
-            let value = p.value;
-            if ('array' === p.type || 'object' === p.type) {
-                value = JSON.stringify(value);
+let adapter;
+function startAdapter(options = {}) {
+    return adapter = utils.adapter(Object.assign({}, options, { 
+        // custom options
+        name: 'viessmannapi', ready: () => __awaiter(this, void 0, void 0, function* () {
+            log('starting adapter...');
+            adapter.setState('info.connection', false, true);
+            const _client = yield initializeClient();
+            if (_client === null) {
+                return;
             }
-            adapter.setState(name, value, true);
-        });
-        adapter.setState("info.connection", true, true);
-        adapter.subscribeStates("*");
-    }),
-    unload: (callback) => __awaiter(this, void 0, void 0, function* () {
-        try {
-            client.clearObservers();
-            adapter.log.info('cleaned everything up...');
-            callback();
-        }
-        catch (e) {
-            callback();
-        }
-    }),
-    stateChange: (id, state) => {
-        const s = JSON.stringify(state);
-        log(`received update for ID ${id}: ${s}`, 'silly');
-    },
-    message: (obj) => __awaiter(this, void 0, void 0, function* () {
-        if (!obj) {
-            return false;
-        }
-        function respond(response) {
-            if (obj.callback)
-                adapter.sendTo(obj.from, obj.command, response, obj.callback);
-        }
-        // some predefined responses so we only have to define them once
-        const responses = {
-            OK: { error: null, result: "ok" },
-            ERROR_UNKNOWN_COMMAND: { error: "Unknown command!" },
-            MISSING_PARAMETER: (paramName) => {
-                return { error: 'missing parameter "' + paramName + '"!' };
-            },
-            ERROR: (error) => ({ error }),
-        };
-        log(`Received command [${obj.command}]`, 'debug');
-        switch (obj.command) {
-            case 'action': {
-                const params = obj.message;
-                const feature = params.feature;
-                const action = params.action;
-                const payload = params.payload;
-                if (!feature) {
-                    respond(responses.MISSING_PARAMETER('feature'));
-                    return false;
+            client = _client;
+            client.getFeatures().forEach(f => createFeatureObjects(client, f));
+            client.observeConnection(connected => adapter.setState('info.connection', connected, true));
+            client.observe((f, p) => {
+                const name = `${f.meta.feature}.${p.name}`;
+                const val = JSON.stringify(p);
+                log(`update for ${name}, value ${val}`, 'silly');
+                // TODO conversion of arrays and objects into strings due to ioBroker not beeing able to handle those
+                let value = p.value;
+                if ('array' === p.type || 'object' === p.type) {
+                    value = JSON.stringify(value);
                 }
-                if (!action) {
-                    respond(responses.MISSING_PARAMETER('action'));
-                    return false;
-                }
-                if (!payload) {
-                    respond(responses.MISSING_PARAMETER('payload'));
-                    return false;
-                }
-                const result = yield client.executeAction(feature, action, payload);
-                return result.caseOf({
-                    left: error => {
-                        respond(responses.ERROR(error));
-                        return false;
-                    },
-                    right: ok => {
-                        respond(responses.OK);
-                        return true;
-                    }
-                });
+                adapter.setState(name, value, true);
+            });
+            adapter.setState('info.connection', true, true);
+            adapter.subscribeStates('*');
+        }), unload: (callback) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                client.clearObservers();
+                adapter.log.info('cleaned everything up...');
+                callback();
             }
-            case 'describe': {
-                const allFeatures = client.getFeatures();
-                respond({ result: allFeatures });
-                return true;
+            catch (e) {
+                callback();
             }
-            default: {
-                log(`Unknown message command [${obj.command}] received`, 'warn');
-                respond(responses.ERROR_UNKNOWN_COMMAND);
+        }), stateChange: (id, state) => {
+            const s = JSON.stringify(state);
+            log(`received update for ID ${id}: ${s}`, 'silly');
+        }, message: (obj) => __awaiter(this, void 0, void 0, function* () {
+            if (!obj) {
                 return false;
             }
-        }
-    })
-});
+            function respond(response) {
+                if (obj.callback)
+                    adapter.sendTo(obj.from, obj.command, response, obj.callback);
+            }
+            // some predefined responses so we only have to define them once
+            const responses = {
+                OK: { error: null, result: 'ok' },
+                ERROR_UNKNOWN_COMMAND: { error: 'Unknown command!' },
+                MISSING_PARAMETER: (paramName) => {
+                    return { error: 'missing parameter "' + paramName + '"!' };
+                },
+                ERROR: (error) => ({ error }),
+            };
+            log(`Received command [${obj.command}]`, 'debug');
+            switch (obj.command) {
+                case 'action': {
+                    const params = obj.message;
+                    const feature = params.feature;
+                    const action = params.action;
+                    const payload = params.payload;
+                    if (!feature) {
+                        respond(responses.MISSING_PARAMETER('feature'));
+                        return false;
+                    }
+                    if (!action) {
+                        respond(responses.MISSING_PARAMETER('action'));
+                        return false;
+                    }
+                    if (!payload) {
+                        respond(responses.MISSING_PARAMETER('payload'));
+                        return false;
+                    }
+                    const result = yield client.executeAction(feature, action, payload);
+                    return result.caseOf({
+                        left: error => {
+                            respond(responses.ERROR(error));
+                            return false;
+                        },
+                        right: ok => {
+                            respond(responses.OK);
+                            return true;
+                        }
+                    });
+                }
+                case 'describe': {
+                    const allFeatures = client.getFeatures();
+                    respond({ result: allFeatures });
+                    return true;
+                }
+                default: {
+                    log(`Unknown message command [${obj.command}] received`, 'warn');
+                    respond(responses.ERROR_UNKNOWN_COMMAND);
+                    return false;
+                }
+            }
+        }) }));
+}
 function initializeClient() {
     return __awaiter(this, void 0, void 0, function* () {
+        let pollInterval = (adapter.config.pollInterval || 60) * 1000;
+        if (pollInterval < 10000) {
+            log('poll interval must not be smaller than 10 seconds', 'warn');
+            pollInterval = 10000;
+        }
         let viessmannConfig = {
             auth: {
                 host: 'https://iam.viessmann.com',
@@ -126,7 +130,7 @@ function initializeClient() {
                 host: 'https://api.viessmann-platform.io',
             },
             logger: log,
-            pollInterval: 60000
+            pollInterval: pollInterval
         };
         let user = adapter.config.email;
         let pwd = adapter.config.password;
@@ -244,12 +248,18 @@ function createPropertyObject(client, feature, property) {
             adapter.setState(name, value, true);
     });
 }
-function log(message, level = "info") {
+function log(message, level = 'info') {
     if (!adapter)
         return;
-    if (level === "silly" && !(level in adapter.log))
-        level = "debug";
+    if (level === 'silly' && !(level in adapter.log))
+        level = 'debug';
     adapter.log[level](message);
 }
 ;
+if (module && module.parent) {
+    module.exports = startAdapter;
+}
+else {
+    startAdapter();
+}
 //# sourceMappingURL=main.js.map

@@ -8,3 +8,7 @@ node_modules
 test
 .travis.yml
 appveyor.yml
+src/
+dist/**/*.map
+tsconfig.json
+tslint.json
