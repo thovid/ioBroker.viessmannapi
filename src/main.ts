@@ -8,7 +8,7 @@ let adapter: ioBroker.Adapter;
 function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
     return adapter = utils.adapter({
         // Default options
-        ...options,
+        //...options,
         // custom options
         name: 'viessmannapi',
 
@@ -123,6 +123,12 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
 }
 
 async function initializeClient(): Promise<viessmann.Client | null> {
+    let pollInterval = (adapter.config.pollInterval || 60) * 1000;
+    if (pollInterval < 10000) {
+        log('poll interval must not be smaller than 10 seconds', 'warn');
+        pollInterval = 10000;
+    }
+
     let viessmannConfig: viessmann.ViessmannClientConfig = {
         auth: {
             host: 'https://iam.viessmann.com',
@@ -134,7 +140,7 @@ async function initializeClient(): Promise<viessmann.Client | null> {
             host: 'https://api.viessmann-platform.io',
         },
         logger: log,
-        pollInterval: 60000
+        pollInterval: pollInterval
     };
 
     let user = adapter.config.email;
@@ -253,16 +259,19 @@ function createPropertyObject(client: viessmann.Client, feature: viessmann.Featu
     });
 }
 
-function log(message: string, level: ioBroker.LogLevel = "info") {
+function log(message: string, level: ioBroker.LogLevel = 'info') {
     if (!adapter) return;
-    if (level === "silly" && !(level in adapter.log)) level = "debug";
+    if (level === 'silly' && !(level in adapter.log)) level = 'debug';
     adapter.log[level](message);
 };
 
+log('starting adapter????');
 if (module && module.parent) {
-	// Export startAdapter in compact mode
-	module.exports = startAdapter;
+    // Export startAdapter in compact mode
+    module.exports = startAdapter;
+    log('looks like compact mode');
 } else {
-	// Otherwise start the adapter immediately
-	startAdapter();
+    // Otherwise start the adapter immediately
+    log('looks like normal mode');
+    startAdapter();
 }
