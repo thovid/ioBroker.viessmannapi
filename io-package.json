@@ -56,7 +56,7 @@
         ],
         "readme": "https://github.com/thovid/ioBroker.viessmannapi/blob/master/README.md",
         "loglevel": "info",
-        "type": "general",
+        "type": "climate-control",
         "license": "MIT",
         "messagebox": true,
         "materialize": true,
