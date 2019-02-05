@@ -121,6 +121,8 @@ This script queries all available features and prints them into the log.
 - This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
 
 ## Changelog
+### 1.3.1 (2019/02/05)
+* (thovid) reduced package size by removing unused stuff
 ### 1.3.0 (2019/02/05)
 * (thovid) impoved action execution: validation of payload improved, schedule payload now supported
 * (thovid) added support for compact mode

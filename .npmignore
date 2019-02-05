@@ -11,4 +11,5 @@ appveyor.yml
 src/
 dist/**/*.map
 tsconfig.json
+tmp
 tslint.json
