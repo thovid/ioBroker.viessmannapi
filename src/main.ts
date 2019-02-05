@@ -5,7 +5,6 @@ import {p} from "./utils";
 let client: viessmann.Client;
 let adapter: ioBroker.Adapter;
 
-console.log("hello");
 function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
     return adapter = utils.adapter({
         // Default options
@@ -14,8 +13,8 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
         name: 'viessmannapi',
 
         ready: async () => {
-            log("starting adapter...");
-            adapter.setState("info.connection", false, true);
+            log('starting adapter...');
+            adapter.setState('info.connection', false, true);
             const _client = await initializeClient();
             if (_client === null) {
                 return;
@@ -24,11 +23,11 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
             client = _client;
             client.getFeatures().forEach(f => createFeatureObjects(client, f));
 
-            client.observeConnection(connected => adapter.setState("info.connection", connected, true));
+            client.observeConnection(connected => adapter.setState('info.connection', connected, true));
             client.observe((f, p) => {
                 const name = `${f.meta.feature}.${p.name}`;
                 const val = JSON.stringify(p);
-                log(`update for ${name}, value ${val}`, 'debug');
+                log(`update for ${name}, value ${val}`, 'silly');
 
                 // TODO conversion of arrays and objects into strings due to ioBroker not beeing able to handle those
                 let value = p.value;
@@ -38,8 +37,8 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
                 adapter.setState(name, value, true);
             });
 
-            adapter.setState("info.connection", true, true);
-            adapter.subscribeStates("*");
+            adapter.setState('info.connection', true, true);
+            adapter.subscribeStates('*');
         },
 
         unload: async (callback) => {
@@ -67,8 +66,8 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
             }
             // some predefined responses so we only have to define them once
             const responses = {
-                OK: {error: null, result: "ok"},
-                ERROR_UNKNOWN_COMMAND: {error: "Unknown command!"},
+                OK: {error: null, result: 'ok'},
+                ERROR_UNKNOWN_COMMAND: {error: 'Unknown command!'},
                 MISSING_PARAMETER: (paramName: string) => {
                     return {error: 'missing parameter "' + paramName + '"!'};
                 },

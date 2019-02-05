@@ -123,6 +123,8 @@ This script queries all available features and prints them into the log.
 ## Changelog
 ### 1.3.0 (2019/02/xx)
 * (thovid) impoved action execution: validation of payload improved, schedule payload now supported
+* (thovid) added support for compact mode
+* (thovid) added configuration for poll interval
 ### 1.2.0 (2018/12/18)
 * (thovid) added experimental support to execute actions on a feature via the `sendTo` function
 ### 1.1.2 (2018/12/10)

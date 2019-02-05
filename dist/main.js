@@ -13,24 +13,23 @@ const viessmann = require("viessmann-api-client");
 const utils_1 = require("./utils");
 let client;
 let adapter;
-console.log("hello");
 function startAdapter(options = {}) {
     return adapter = utils.adapter(Object.assign({}, options, { 
         // custom options
         name: 'viessmannapi', ready: () => __awaiter(this, void 0, void 0, function* () {
-            log("starting adapter...");
-            adapter.setState("info.connection", false, true);
+            log('starting adapter...');
+            adapter.setState('info.connection', false, true);
             const _client = yield initializeClient();
             if (_client === null) {
                 return;
             }
             client = _client;
             client.getFeatures().forEach(f => createFeatureObjects(client, f));
-            client.observeConnection(connected => adapter.setState("info.connection", connected, true));
+            client.observeConnection(connected => adapter.setState('info.connection', connected, true));
             client.observe((f, p) => {
                 const name = `${f.meta.feature}.${p.name}`;
                 const val = JSON.stringify(p);
-                log(`update for ${name}, value ${val}`, 'debug');
+                log(`update for ${name}, value ${val}`, 'silly');
                 // TODO conversion of arrays and objects into strings due to ioBroker not beeing able to handle those
                 let value = p.value;
                 if ('array' === p.type || 'object' === p.type) {
@@ -38,8 +37,8 @@ function startAdapter(options = {}) {
                 }
                 adapter.setState(name, value, true);
             });
-            adapter.setState("info.connection", true, true);
-            adapter.subscribeStates("*");
+            adapter.setState('info.connection', true, true);
+            adapter.subscribeStates('*');
         }), unload: (callback) => __awaiter(this, void 0, void 0, function* () {
             try {
                 client.clearObservers();
@@ -62,8 +61,8 @@ function startAdapter(options = {}) {
             }
             // some predefined responses so we only have to define them once
             const responses = {
-                OK: { error: null, result: "ok" },
-                ERROR_UNKNOWN_COMMAND: { error: "Unknown command!" },
+                OK: { error: null, result: 'ok' },
+                ERROR_UNKNOWN_COMMAND: { error: 'Unknown command!' },
                 MISSING_PARAMETER: (paramName) => {
                     return { error: 'missing parameter "' + paramName + '"!' };
                 },
