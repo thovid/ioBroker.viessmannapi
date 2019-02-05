@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/thovid/ioBroker.viessmannapi.svg?branch=master)](https://travis-ci.org/thovid/ioBroker.viessmannapi)
+
 ![Logo](admin/viessmannapi.png)
 # ioBroker.viessmannapi
 =================
