@@ -265,7 +265,7 @@ function log(message: string, level: ioBroker.LogLevel = 'info') {
     adapter.log[level](message);
 };
 
-if (module && module.parent) {
+if (module && module.parent && module.parent.parent) {
     module.exports = startAdapter;
 } else {
     startAdapter();

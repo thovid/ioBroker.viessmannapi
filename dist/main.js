@@ -256,7 +256,7 @@ function log(message, level = 'info') {
     adapter.log[level](message);
 }
 ;
-if (module && module.parent) {
+if (module && module.parent && module.parent.parent) {
     module.exports = startAdapter;
 }
 else {

@@ -49,7 +49,7 @@
             "Thomas Vidic <theuklid@gmail.com>"
         ],
         "platform": "Javascript/Node.js",
-        "main": "dist/main.js",
+        "main": "main.js",
         "mode": "daemon",
         "icon": "viessmannapi.png",
         "extIcon": "https://raw.githubusercontent.com/thovid/ioBroker.viessmannapi/master/admin/viessmannapi.png",
