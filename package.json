@@ -40,7 +40,7 @@
     "rimraf": "^2.6.3",
     "ts-node": "^7.0.1"
   },
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
     "clean-build-dir": "cpx dist/src/**/*.* dist && rimraf dist/src && rimraf dist/{io-,}package.json",
     "prebuild": "rimraf ./dist",
