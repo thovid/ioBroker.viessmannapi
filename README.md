@@ -123,6 +123,8 @@ This script queries all available features and prints them into the log.
 - This adpater is in early development! Expect bugs, and feel free to report bugs here on github (https://github.com/thovid/ioBroker.viessmannapi/issues").
 
 ## Changelog
+### 1.3.2 (2019/02/10)
+* (thovid) Fixed a bug preventing the adapter to start
 ### 1.3.1 (2019/02/05)
 * (thovid) reduced package size by removing unused stuff
 ### 1.3.0 (2019/02/05)
