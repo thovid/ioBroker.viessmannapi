@@ -9,7 +9,7 @@ This adapter connects your ioBroker system to your Viessmann central heating via
 Note that this is a private project, so use at your own risk. It is not supported or endorsed by Viessmann!
 
 ## Installation
-install the Adpater from this github repository. On adapter settings, enter user name and password of your Viessmann account. If everything goes well, you should see states appear under `viessmannapi.X`. First values should arrive after 60 seconds.
+As this adapter is in an early development stage, installation can be done via the ioBroker 'latest' repository. On adapter settings, enter user name and password of your Viessmann account. If everything goes well, you should see states appear under `viessmannapi.X`. First values should arrive after 60 seconds.
 
 ## States
 The specific states may depend on your installation. Examples are
