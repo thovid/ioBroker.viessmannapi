@@ -6,11 +6,11 @@ var path          = require('path');
 var child_process = require('child_process');
 var rootDir       = path.normalize(__dirname + '/../../');
 var pkg           = require(rootDir + 'package.json');
-var debug         = false; //typeof v8debug === 'object';
+var debug         = typeof v8debug === 'object';
 pkg.main = pkg.main || 'main.js';
 
-var adapterPath = path.normalize(rootDir).replace(/\\/g, '/').split('/');
-var adapterName = adapterPath[adapterPath.length - 2];
+var adapterName = path.normalize(rootDir).replace(/\\/g, '/').split('/');
+adapterName = adapterName[adapterName.length - 2];
 var adapterStarted = false;
 
 function getAppName() {
@@ -256,8 +256,8 @@ function installJsController(cb) {
             if (debug) {
                 // start controller
                 _pid = child_process.exec('node ' + appName + '.js stop', {
-                    cwd: rootDir + 'node_modules/' + appName + '.js-controller'
-                    // ,stdio: [0, 1, 2]
+                    cwd: rootDir + 'node_modules/' + appName + '.js-controller',
+                    stdio: [0, 1, 2]
                 });
             } else {
                 _pid = child_process.fork(appName + '.js', ['stop'], {
@@ -281,8 +281,8 @@ function installJsController(cb) {
                 if (debug) {
                     // start controller
                     _pid = child_process.exec('node ' + appName + '.js setup first --console', {
-                        cwd: rootDir + 'tmp/node_modules/' + appName + '.js-controller'
-                        // ,stdio: [0, 1, 2]
+                        cwd: rootDir + 'tmp/node_modules/' + appName + '.js-controller',
+                        stdio: [0, 1, 2]
                     });
                 } else {
                     __pid = child_process.fork(appName + '.js', ['setup', 'first', '--console'], {
@@ -310,8 +310,8 @@ function installJsController(cb) {
             });
         } else {
             // check if port 9000 is free, else admin adapter will be added to running instance
-            var net = require('net');
-            var client = new net.Socket();
+            var client = new require('net').Socket();
+            client.on('error', () => {});
             client.connect(9000, '127.0.0.1', function() {
                 console.error('Cannot initiate fisrt run of test, because one instance of application is running on this PC. Stop it and repeat.');
                 process.exit(0);
@@ -332,8 +332,8 @@ function installJsController(cb) {
                     if (debug) {
                         // start controller
                         child_process.exec('node ' + appName + '.js setup first', {
-                            cwd: rootDir + 'tmp/node_modules/' + appName + '.js-controller'
-                           // ,stdio: [0, 1, 2]
+                            cwd: rootDir + 'tmp/node_modules/' + appName + '.js-controller',
+                            stdio: [0, 1, 2]
                         });
                     } else {
                         child_process.fork(appName + '.js', ['setup', 'first'], {
@@ -458,8 +458,8 @@ function setupController(cb) {
 
         var objs;
         try {
-            const data = fs.readFileSync(dataDir + 'objects.json', 'r');
-            objs = JSON.parse(data);
+            objs = fs.readFileSync(dataDir + 'objects.json');
+            objs = JSON.parse(objs);
         }
         catch (e) {
             console.log('ERROR reading/parsing system configuration. Ignore');
@@ -486,8 +486,8 @@ function startAdapter(objects, states, callback) {
             if (debug) {
                 // start controller
                 pid = child_process.exec('node node_modules/' + pkg.name + '/' + pkg.main + ' --console silly', {
-                    cwd: rootDir + 'tmp'
-                    // ,stdio: [0, 1, 2]
+                    cwd: rootDir + 'tmp',
+                    stdio: [0, 1, 2]
                 });
             } else {
                 // start controller
@@ -714,7 +714,7 @@ function getAdapterConfig(instance) {
     return objects[id];
 }
 
-if (typeof module !== undefined) {
+if (typeof module !== undefined && module.parent) {
     module.exports.getAdapterConfig = getAdapterConfig;
     module.exports.setAdapterConfig = setAdapterConfig;
     module.exports.startController  = startController;
