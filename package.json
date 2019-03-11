@@ -41,7 +41,7 @@
     "ts-node": "^7.0.1",
     "@iobroker/testing": "^1.1.10"
   },
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
     "clean-build-dir": "cpx dist/src/**/*.* dist && rimraf dist/src && rimraf dist/{io-,}package.json",
     "prebuild": "rimraf ./dist",
