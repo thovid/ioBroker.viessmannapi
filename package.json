@@ -38,9 +38,10 @@
     "gulp": "^3.9.1",
     "mocha": "^4.1.0",
     "rimraf": "^2.6.3",
-    "ts-node": "^7.0.1"
+    "ts-node": "^7.0.1",
+    "@iobroker/testing": "^1.1.15"
   },
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
     "clean-build-dir": "cpx dist/src/**/*.* dist && rimraf dist/src && rimraf dist/{io-,}package.json",
     "prebuild": "rimraf ./dist",
@@ -49,8 +50,10 @@
     "build": "npm run build:ts",
     "test:js": "node node_modules/mocha/bin/mocha test/test*.js",
     "test:ts": "node node_modules/mocha/bin/mocha --require ts-node/register --require source-map-support/register test/**/*.test.ts",
-    "test:package": "node node_modules/mocha/bin/mocha test/testPackageFiles.js",
-    "test": "npm run test:ts && npm run test:js"
+    "test:package": "mocha test/package --exit",
+    "test": "npm run test:package && npm run test:unit",
+    "test:unit": "mocha test/unit --exit",
+    "test:integration": "mocha test/integration --exit"
   },
   "bugs": {
     "url": "https://github.com/thovid/ioBroker.viessmannapi/issues"
