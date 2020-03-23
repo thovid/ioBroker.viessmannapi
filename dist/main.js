@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -14,7 +15,7 @@ const utils_1 = require("./utils");
 let client;
 let adapter;
 function startAdapter(options = {}) {
-    return adapter = utils.adapter(Object.assign({}, options, { 
+    return adapter = utils.adapter(Object.assign(Object.assign({}, options), { 
         // custom options
         name: 'viessmannapi', ready: () => __awaiter(this, void 0, void 0, function* () {
             log('starting adapter...');
@@ -53,7 +54,7 @@ function startAdapter(options = {}) {
             log(`received update for ID ${id}: ${s}`, 'silly');
         }, message: (obj) => __awaiter(this, void 0, void 0, function* () {
             if (!obj) {
-                return false;
+                return;
             }
             function respond(response) {
                 if (obj.callback)
@@ -77,44 +78,44 @@ function startAdapter(options = {}) {
                     const payload = params.payload;
                     if (!feature) {
                         respond(responses.MISSING_PARAMETER('feature'));
-                        return false;
+                        return;
                     }
                     if (!action) {
                         respond(responses.MISSING_PARAMETER('action'));
-                        return false;
+                        return;
                     }
                     if (!payload) {
                         respond(responses.MISSING_PARAMETER('payload'));
-                        return false;
+                        return;
                     }
                     const result = yield client.executeAction(feature, action, payload);
                     return result.caseOf({
                         left: error => {
                             respond(responses.ERROR(error));
-                            return false;
+                            return;
                         },
                         right: ok => {
                             respond(responses.OK);
-                            return true;
+                            return;
                         }
                     });
                 }
                 case 'describe': {
                     const allFeatures = client.getFeatures();
                     respond({ result: allFeatures });
-                    return true;
+                    return;
                 }
                 default: {
                     log(`Unknown message command [${obj.command}] received`, 'warn');
                     respond(responses.ERROR_UNKNOWN_COMMAND);
-                    return false;
+                    return;
                 }
             }
         }) }));
 }
 function initializeClient() {
     return __awaiter(this, void 0, void 0, function* () {
-        let pollInterval = (adapter.config.pollInterval || 60) * 1000;
+        let pollInterval = (adapter.config.pollInterval || 900) * 1000;
         if (pollInterval < 10000) {
             log('poll interval must not be smaller than 10 seconds', 'warn');
             pollInterval = 10000;
@@ -187,7 +188,7 @@ function obtainCredentials(user, password) {
 }
 function updateConfig(newConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        const config = Object.assign({}, adapter.config, newConfig);
+        const config = Object.assign(Object.assign({}, adapter.config), newConfig);
         return utils_1.p(adapter.getForeignObject, adapter)(`system.adapter.${adapter.namespace}`)
             .then((obj) => {
             obj.native = config;

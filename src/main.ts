@@ -58,7 +58,7 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
 
         message: async (obj) => {
             if (!obj) {
-                return false;
+                return;
             }
 
             function respond(response: string | {}) {
@@ -84,38 +84,38 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
 
                     if (!feature) {
                         respond(responses.MISSING_PARAMETER('feature'));
-                        return false;
+                        return;
                     }
                     if (!action) {
                         respond(responses.MISSING_PARAMETER('action'));
-                        return false;
+                        return;
                     }
                     if (!payload) {
                         respond(responses.MISSING_PARAMETER('payload'));
-                        return false;
+                        return;
                     }
 
                     const result = await client.executeAction(feature, action, payload);
                     return result.caseOf({
                         left: error => {
                             respond(responses.ERROR(error));
-                            return false;
+                            return;
                         },
                         right: ok => {
                             respond(responses.OK);
-                            return true;
+                            return;
                         }
                     });
                 }
                 case 'describe': {
                     const allFeatures = client.getFeatures();
                     respond({result: allFeatures});
-                    return true;
+                    return;
                 }
                 default: {
                     log(`Unknown message command [${obj.command}] received`, 'warn');
                     respond(responses.ERROR_UNKNOWN_COMMAND);
-                    return false;
+                    return;
                 }
             }
         }
@@ -123,7 +123,7 @@ function startAdapter(options: Partial<ioBroker.AdapterOptions> = {}) {
 }
 
 async function initializeClient(): Promise<viessmann.Client | null> {
-    let pollInterval = (adapter.config.pollInterval || 60) * 1000;
+    let pollInterval = (adapter.config.pollInterval || 900) * 1000;
     if (pollInterval < 10000) {
         log('poll interval must not be smaller than 10 seconds', 'warn');
         pollInterval = 10000;
